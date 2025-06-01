@@ -1,5 +1,7 @@
 from rest_framework import serializers
 from api.models.users import User
+from django.contrib.auth.hashers import make_password
+
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
@@ -9,8 +11,5 @@ class UserSerializer(serializers.ModelSerializer):
         }
 
     def create(self, validated_data):
-        senha = validated_data.pop('senha')
-        user = User(**validated_data)
-        user.set_password(senha)
-        user.save()
-        return user
+        validated_data['senha'] = make_password(validated_data['senha'])
+        return super().create(validated_data)
